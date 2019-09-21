@@ -13,7 +13,7 @@ services:
       container_name: lbctest-mysql
       working_dir: /application
       volumes:
-        - .:/application
+        - ./app/:/application
       environment:
         - MYSQL_ROOT_PASSWORD=root
         - MYSQL_DATABASE=crm
@@ -27,7 +27,7 @@ services:
       container_name: lbctest-webserver
       working_dir: /application
       volumes:
-          - .:/application
+          - ./app/:/application
           - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       ports:
        - "1025:80"
@@ -37,6 +37,5 @@ services:
       container_name: lbctest-php-fpm
       working_dir: /application
       volumes:
-        - .:/application
+        - ./app/:/application
         - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
-
