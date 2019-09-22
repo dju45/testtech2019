@@ -39,9 +39,7 @@ class Contacts implements SanitizeInterface
     /**
      * @ORM\Column(type="string", length=25)
      * @Assert\NotBlank
-     * @Assert\Email(
-     *    message = "L'email '{{ value }}' n'est pas valide."
-     * )
+     *
      */
     private $email;
 
