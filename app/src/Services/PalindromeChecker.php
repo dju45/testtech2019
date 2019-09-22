@@ -11,15 +11,21 @@ class PalindromeChecker
         $this->field = $field;
     }
 
+    /**
+     * Vérifie si une chaine de caractères est un palindrome
+     * @return bool
+     *
+     */
     public function isPalindrome(): bool
     {
         //nettoie la chaine de caractères
         $field = str_replace(' ', '', $this->field);
         $field = strtolower($field);
 
-        //reverse the string
+        //inverse la chaine
         $reverseField = strrev($field);
 
+        // retourne vrai si la chaine inversée vaut $field
         return $field === $reverseField;
     }
 
