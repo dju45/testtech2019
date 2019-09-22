@@ -25,8 +25,8 @@
             {% for contact in contacts %}
                 <tr>
                     <td>{{ contact.id|e }}</td>
-                    <td>{{ contact.nom|e }}</td>
-                    <td>{{ contact.prenom|e }}</td>
+                    <td>{{ contact.lastName|e }}</td>
+                    <td>{{ contact.firstName|e }}</td>
                     <td>{{ contact.email|e }}</td>
                     <td class="text-center">
                         <a class='btn btn-info btn-xs'
@@ -34,16 +34,18 @@
                                     class="glyphicon glyphicon-edit"></span> Adresses</a>
                         <a class='btn btn-info btn-xs' href="{{ path('contact_edit', {'id': contact.id }) }}"><span
                                     class="glyphicon glyphicon-edit"></span> Edition</a>
-                        <a href="{{ path('contact_delete', {'id': contact.id}) }}" class="btn btn-danger btn-xs"><span
-                                    class="glyphicon glyphicon-remove"></span> Suppression</a>
+                        {{ include('contact/_delete_form.html.twig') }}
+
                     </td>
                 </tr>
             {% endfor %}
 
         </table>
     {% else %}
-        <p>Pas de contacts</p>
-        <a href="{{ path('contact_add') }}" class="btn btn-primary btn-xs pull-right"><b>+</b> Ajouter un contact</a>
+        <div class="row">
+            <p>Pas de contacts</p>
+            <a href="{{ path('contact_add') }}" class="btn btn-primary ml-5 btn-xs pull-right"><b>+</b> Ajouter un contact</a>
+        </div>
     {% endif %}
     </div>
 {% endblock %}

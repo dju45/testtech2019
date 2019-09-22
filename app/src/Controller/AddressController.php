@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
+use App\Form\AddressesType;
 use App\Model\Entity\Addresses;
 use App\Model\Entity\Contacts;
-use App\Model\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -26,10 +27,9 @@ class AddressController extends AbstractController
      */
     public function index(Contacts $contact): Response
     {
-
         $addresses = $contact->getAddresses();
 
-        return $this->render('addresslist.html.twig', [
+        return $this->render('address/index.html.twig', [
             'addresses' => $addresses,
             'contact' => $contact
         ]);
@@ -37,45 +37,30 @@ class AddressController extends AbstractController
 
     /**
      * Ajout d'adresse pour un contact
-     * @Route("/add", methods={"GET", "POST"}, name="add")
+     * @Route("/add/contact/{id}", methods={"GET", "POST"}, name="add")
      */
-    public function add(): void
+    public function add(Request $request, Contacts $contact): Response
     {
-        $error = false;
-        $id = intval($_GET['id']);
+        $address = new Addresses();
+        $form = $this->createForm(AddressesType::class, $address);
+        $form->handleRequest($request);
 
-        if (!empty($_POST)) {
-            // Nettoyage
-            $response = $this->sanitize($_POST);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $address->setContact($contact);
+            $entityManager->persist($address);
+            $entityManager->flush();
 
-            if ($response["response"]) {
-
-                $idContact = $response['idContact'];
-                $result = $this->Addresse->create([
-                    'number'     => $response['number'],
-                    'city'       => $response['city'],
-                    'country'    => $response['country'],
-                    'postalCode' => $response['postalCode'],
-                    'street'     => $response['street'],
-                    'idContact'  => $response['idContact']
-                ]);
-
-                if ($result) {
-                    header("Location: /index.php?p=address.index&id=$idContact");
-                } else {
-                    $error = true;
-                    $this->twig->render('addressadd.html.twig',
-                        ["idContact" => $id,'error' => $error]);
-                }
-            } else {
-                $error = true;
-                $this->twig->render('addressadd.html.twig',
-                    ["idContact" => $id,'error' => $error]);
-
-            }
+            return $this->redirectToRoute(
+                'address_contact_list',
+                ['id' => $contact->getId()]
+            );
         }
-        echo $this->twig->render('addressadd.html.twig',
-            ["idContact" => $id,'error' => $error]);
+
+        return $this->render('address/add.html.twig', [
+            'address' => $address,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -84,47 +69,24 @@ class AddressController extends AbstractController
      * @param Addresses $addresses
      *
      */
-    public function edit(Addresses $addresses)
+    public function edit(Addresses $address, Request $request): Response
     {
-        $error = false;
-        $id = intval($_GET['id']);
-        if (!empty($_POST)) {
-            $response = $this->sanitize($_POST);
+        $form = $this->createForm(AddressesType::class, $address);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
-            if ($response["response"]) {
-                $addresse = $this->Addresse->findById($id);
-                $result = $this->Addresse->update($id,
-                    [
-                        'number'     => $response['number'],
-                        'city'       => $response['city'],
-                        'country'    => $response['country'],
-                        'postalCode' => $response['postalCode'],
-                        'street'     => $response['street'],
-                    ]);
-                if ($result) {
-                    header("Location: /index.php?p=address.index&id=$addresse->idContact");
-                } else {
-                    $error = true;
-                    $this->twig->render('addressadd.html.twig',
-                        ["idContact" => $id,'error' => $error]);
-
-                }
-            } else {
-
-                $error = true;
-                $this->twig->render('addressadd.html.twig',
-                    ["idContact" => $id,'error' => $error]);
-
-            }
+            return $this->redirectToRoute(
+                'address_contact_list',
+                ['id' => $address->getContact()->getId()]
+            );
         }
 
-        $data = $this->Addresse->findById($id);
-        echo $this->twig->render('addressadd.html.twig',
-            [
-                'data'      => $data,
-                "idContact" => $data->idContact
-            ]);
+        return $this->render('address/edit.html.twig', [
+            'address' => $address,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -132,9 +94,19 @@ class AddressController extends AbstractController
      * @Route("/delete/{id}", methods={"DELETE"}, name="delete")
      * @param Addresses $addresses
      */
-    public function delete(Addresses $addresses)
+    public function delete(Addresses $address, Request $request)
     {
-        //@todo
+        if ($this->isCsrfTokenValid('delete'.$address->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($address);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute(
+            'address_contact_list',
+            ['id' => $address->getContact()->getId()]
+
+        );
     }
 
 }

@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Form\ContactsType;
 use App\Model\Entity\Contacts;
 use App\Model\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,26 +38,30 @@ class ContactController extends AbstractController
      * Ajout d'un contact
      * @Route("/add", methods={"GET", "POST"}, name="add")
      */
-    public function add()
+    public function add(Request $request): Response
     {
-        $error = false;
-        if (!empty($_POST)) {
-            $response = $this->sanitize($_POST);
-            if ($response["response"]) {
-                $result = $this->Contact->create([
-                    'nom'    => $response['nom'],
-                    'prenom' => $response['prenom'],
-                    'email'  => $response['email'],
-                    'userId' => $this->userId
-                ]);
-                if ($result) {
-                    header('Location: /index.php?p=contact.index');
-                }
-            } else {
-                $error = true;
-            }
+        /** @var User $user */
+        $user = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->findOneBy(['id' => 1]);
+
+        $contact = new Contacts();
+        $form = $this->createForm(ContactsType::class, $contact);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $contact->setUser($user);
+            $entityManager->persist($contact);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('contact_list');
         }
-        echo $this->twig->render('add.html.twig', ['error' => $error]);
+
+        return $this->render('contact/add.html.twig', [
+            'contact' => $contact,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -63,9 +69,21 @@ class ContactController extends AbstractController
      * @param Contacts $contacts
      * @Route("/edit/{id}", methods={"GET", "POST"}, name="edit")
      */
-    public function edit(Contacts $contacts)
+    public function edit(Request $request, Contacts $contact): Response
     {
-        //@todo
+        $form = $this->createForm(ContactsType::class, $contact);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('contact_list');
+        }
+
+        return $this->render('contact/edit.html.twig', [
+            'contact' => $contact,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -73,12 +91,15 @@ class ContactController extends AbstractController
      * @Route("/delete/{id}", methods={"delete"}, name="delete")
      * @param Contacts $contacts
      */
-    public function delete(Contacts $contacts)
+    public function delete(Contacts $contact, Request $request): Response
     {
-        $result = $this->Contact->delete($_GET['id']);
-        if ($result) {
-            header('Location: /index.php?p=contact.index');
+        if ($this->isCsrfTokenValid('delete'.$contact->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($contact);
+            $entityManager->flush();
         }
+
+        return $this->redirectToRoute('contact_list');
     }
 
     /**

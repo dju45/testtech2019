@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div><h4 class="text-center">Liste des adresses [ {{ contact.lastName }} {{ contact.firstName }}
+            : {{ contact.email }}
+            ]</h4></div>
+
+    {% if addresses is not empty %}
+        <div class="row row col-md-12 pull-right ">
+            <a href="{{ path('address_add', {'id':contact.id}) }}" class="btn btn-primary btn-xs pull-right"><b>+</b>
+                Ajouter une
+                adresse</a>
+        </div>
+
+        <div class="row col-md-12 ">
+        <table class="table table-striped custab">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Numero</th>
+                <th>Rue</th>
+                <th>Code Postal</th>
+                <th>ville</th>
+                <th>pays</th>
+                <th class="text-center">Action</th>
+            </tr>
+            </thead>
+            {% for address in addresses %}
+                <tr>
+                    <td>{{ address.id|e }}</td>
+                    <td>{{ address.number|e }}</td>
+                    <td>{{ address.street|e }}</td>
+                    <td>{{ address.postalCode|e }}</td>
+                    <td>{{ address.city|e }}</td>
+                    <td>{{ address.country|e }}</td>
+                    <td class="text-center">
+                        <a class='btn btn-info btn-xs' href="{{ path('address_edit', {'id': address.id}) }}"><span
+                                    class="glyphicon glyphicon-edit"></span>Edition</a>
+                        {{ include('address/_delete_form.html.twig') }}
+
+                </tr>
+            {% endfor %}
+
+        </table>
+    {% else %}
+        <div class="row">
+            <p>Pas d'adresses</p>
+            <a href="{{ path('address_add', {'id':contact.id}) }}"
+               class="btn btn-primary btn-xs ml-5 pull-right"><b>+</b> Ajouter une adresse</a>
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}
