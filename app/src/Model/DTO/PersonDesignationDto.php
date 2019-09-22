@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Model\DTO;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator;
 
@@ -12,46 +14,22 @@ class PersonDesignationDto
      * @Validator\PalindromeValidator
      *
      */
-    private $firstName;
+    private $field;
 
     /**
-     * @var string $lastName
-     * @Assert\NotBlank
-     * @Validator\PalindromeValidator
-     *
+     * @return string
      */
-    private $lastName;
-
-    /**
-     * @return mixed
-     */
-    public function getFirstName()
+    public function getField(): string
     {
-        return $this->firstName;
+        return $this->field;
     }
 
     /**
-     * @param mixed $firstName
+     * @param string $field
      */
-    public function setFirstName($firstName): void
+    public function setField(string $field): void
     {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @param mixed $lastName
-     */
-    public function setLastName($lastName): void
-    {
-        $this->lastName = $lastName;
+        $this->field = $field;
     }
 
 }

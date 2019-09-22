@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Model\DTO;
+
 class EmailDto
 {
     /**
