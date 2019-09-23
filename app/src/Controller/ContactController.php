@@ -93,50 +93,21 @@ class ContactController extends AbstractController
      */
     public function delete(Contacts $contact, Request $request): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$contact->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $contact->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
+            $addresses = $contact->getAddresses();
+
+            if ($addresses) {
+                foreach ($addresses as $address) {
+                    $contact->removeAddress($address);
+                    $entityManager->remove($address);
+                }
+            }
+
             $entityManager->remove($contact);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('contact_list');
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     * @throws Exception
-     * @throws InvalidArgumentException
-     */
-    public function sanitize(array $data = []): array
-    {
-        if (empty($nom)) {
-            throw new Exception('Le nom est obligatoire');
-        }
-
-        if (empty($prenom)) {
-            throw new Exception('Le prenom est obligatoire');
-        }
-
-        if (empty($email)) {
-            throw new Exception('Le email est obligatoire');
-        } elseif (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('Le format de l\'email est invalide');
-        }
-
-        $prenom = strtoupper($data['prenom']);
-        $nom    = strtoupper($data['nom']);
-        $email  = strtolower($data['email']);
-
-        $isPalindrome = $this->apiClient('palindrome', ['name' => $nom]);
-        $isEmail = $this->apiClient('email', ['email' => $email]);
-        if ((!$isPalindrome->response) && $isEmail->response && $prenom) {
-            return [
-                'response' => true,
-                'email'    => $email,
-                'prenom'   => $prenom,
-                'nom'      => $nom
-            ];
-        }
     }
 }
