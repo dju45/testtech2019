@@ -12,7 +12,7 @@ $ git clone https://github.com/dju45/testtech2019.git .
 
 lancer docker et se connecter aux conteneurs:
 ```
- docker-compose up --build
+ docker-compose up -d
 ```
 ```
  docker-compose exec php-fpm sh
@@ -35,7 +35,7 @@ $ bin/console doctrine:database:create .
 
 jouer les migrations:
 ```
-$ bin/console doctrine:migration:migrate .
+$ bin/console doctrine:migrations:migrate .
 ```
 
 jouer les tests unitaires:
@@ -44,7 +44,7 @@ $ ./bin/phpunit .
 ```
 
 pour accéder à localhost:
-- [http://localhost:1025](http://localhost/1025)
+- [http://localhost:1025](http://localhost:1025)
 
 pour accéder à adminer:
-- [http://localhost:8080](http://localhost/8080)
+- [http://localhost:8080](http://localhost:8080)
