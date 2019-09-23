@@ -64,41 +64,45 @@
 
 {% block javascripts %}
     <script>
+        isPalindrome($("#contacts_lastName"));
+        isPalindrome($("#contacts_firstName"));
 
-        $("#nom").focusout(function () {
-            var nom = $('#nom').val();
-            if (nom) {
-                $.ajax({
-                    type: 'POST',
-                    url: 'http://localhost:1025/api/palindrome',
-                    data: {
-                        'name': nom
-                    },
-                    success: function (res) {
-                        if (res.response != true) {
-                            $('#alert').show();
-                            $('#nameStatus').empty().append("<span class='text-success'>- Le nom est valide</span>");
-                        } else {
-                            $('#alert').show();
-                            $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut pas être un palindrome</span>");
+        function isPalindrome(field) {
+            field.focusout(function () {
+                const nom = field.val();
+                if (nom) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://localhost:1025/api/palindrome',
+                        data: {
+                            'name': nom
+                        },
+                        success: function (res) {
+                            if (res.response != true) {
+                                $('#alert').show();
+                                $('#nameStatus').empty().append("<span class='text-success'>- Le nom est valide</span>");
+                            } else {
+                                $('#alert').show();
+                                $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut pas être un palindrome</span>");
+                            }
                         }
-                    }
-                });
-            } else {
-                $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut être nul </span>");
-            }
+                    });
+                } else {
+                    $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut être nul </span>");
+                }
 
-        });
+            });
+        }
 
         $("#checkEmail").click(function () {
-            var email = $('#email').val();
+            const email = $('#contacts_email').val();
             if (email) {
                 $('#progress').show();
                 $.ajax({
                     type: 'POST',
                     url: 'http://localhost:1025/api/email',
                     data: {
-                        'email': $('#email').val()
+                        'email': email
                     },
                     success: function (res) {
                         $('#progress').hide();

@@ -1,30 +1,32 @@
+<div style="display: none" class="alert alert-primary" id="alert" role="alert">
+    <span id="nameStatus"></span></br>
+</div>
 {{ form_start(form) }}
+
 <div class="card-body">
     <div id="contact" class="row">
-        <div class="form-group  col-md-6">
+        <div class="form-group  col-md-3">
             <div class="form-group row">
                 {{ form_row(form.lastName) }}
                 {{ form_errors(form.lastName) }}
 
             </div>
         </div>
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-3">
             <div class="form-group row">
                 {{ form_row(form.firstName) }}
                 {{ form_errors(form.firstName) }}
             </div>
         </div>
 
-        <div class="form-group col-md-6">
+        <div class="form-group col-md-3">
             <div class="form-group row">
                 {{ form_row(form.email) }}
                 {{ form_errors(form.email) }}
-                {#<input type="text" id="email" name="email" value="mail"
-                       class="form-control col-sm-10" autocomplete="off" onkeyup="this.value = this.value.toLowerCase();"/>#}
             </div>
         </div>
-        <div class="form-group  col-md-6">
-            <div class="col-md-12 row">
+        <div class="form-group mt-4  col-md-3">
+            <div class="form-group row">
                 <span id="checkEmail" class="btn btn-info col-md-4">valider</span>
                 <div id="stateEmail" class="col-md-10">
                     <div style="display: none" class="progress" id="progress">
@@ -38,8 +40,6 @@
             </div>
 
         </div>
-        <div class="form-group col-md-6"></div>
-
     </div>
 
 

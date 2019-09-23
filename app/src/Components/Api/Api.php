@@ -1,73 +1,68 @@
 <?php
 
-namespace App\Components;
+namespace App\Components\Api;
 
-class Api extends ApiService
+use App\Services\PalindromeChecker;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class Api extends AbstractController
 {
     /**
      * Palindrome
+     * @Route("/api/palindrome", methods={"GET","POST"}, name="api_palindrome")
      */
-    public function palindrome()
+    public function palindrome(Request $request)
     {
-        if ($this->getRequestMethod() != "POST") {
-            $this->response('', 406);
+        $response = [];
+        if (!$request->isMethod('POST')) {
+            return new JsonResponse([], Response::HTTP_NOT_FOUND);
         }
 
-        $name = $this->request['name'];
-        // TODO ecrire un objet palindrome
-        //$palindrome = new Palindrome($name);
+        $name = $request->get('name');
+        $palindrome = new PalindromeChecker($name);
 
         if ($name) {
-            // TODO ecrire la methode isValid() de l'objet palindrome et la tester avec PHPUnit
-            /*
-            if ($palindrome->isValid()) {
-                $this->response($this->json(["response" => true]), 200);
+            if ($palindrome->isPalindrome()) {
+                $response = ['response' => true];
             } else {
-                $this->response($this->json(["response" => false]), 200);
+                $response = ['response' => false];
             }
-            */
         }
+
+        return new JsonResponse($response);
     }
 
     /**
      * Vérification du format de l'email
+     * @Route("/api/email", methods={"GET","POST"}, name="api_email")
      */
-    public function email()
+    public function email(Request $request)
     {
-        if ($this->getRequestMethod() != "POST") {
-            $this->response('', 406);
+        $response = [];
+        if (!$request->isMethod('POST')) {
+            return new JsonResponse([], Response::HTTP_NOT_FOUND);
         }
-        $email = $this->_request['email'];
+
+        $email = $request->get('email');
         if ($email) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $this->response($this->json([
-                    "response" => true,
-                    "message"  => "L'email est au bon format"
-                ]), 200);
+                $response = [
+                    'response' => true,
+                    'message' => "L'email est au bon format"
+                ];
             } else {
-                $this->response($this->json([
-                    "response" => false,
-                    "message"  => "Le format de l'email n'est pas correct"
-                ]), 200);
+                $response = [
+                    'response' => false,
+                    'message' => "Le format de l'email n'est pas correct"
+                ];
             }
         }
-    }
 
-    /**
-     * Encodage des données en json
-     *
-     * @param $data
-     *
-     * @return string
-     */
-    private function json($data)
-    {
-        if (is_array($data)) {
-            return json_encode($data);
-        }
+        return new JsonResponse($response);
 
     }
 }
-
-$api = new Api();
-$api->processApi();
