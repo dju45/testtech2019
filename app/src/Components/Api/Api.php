@@ -17,11 +17,10 @@ class Api extends AbstractController
      * Vérifie si le champ est un palindrome
      *
      * @Route("/api/palindrome", methods={"POST"}, name="api_palindrome")
-     * @param ValidatorInterface $validator
      * @param Request $request
      * @return JsonResponse
      */
-    public function palindrome(Request $request, ValidatorInterface $validator): JsonResponse
+    public function palindrome(Request $request): JsonResponse
     {
         $response = [];
         if (!$request->isMethod('POST')) {
@@ -73,7 +72,6 @@ class Api extends AbstractController
                 'response' => false,
                 'message' => $errors[0]->getMessage()
             ];
-
         } else {
             $response = [
                 'response' => true,

@@ -8,7 +8,7 @@
 
     {% if contacts is not empty %}
         <div class="row row col-md-12 pull-right ">
-            <a href="{{ path('contact_add') }}" class="btn btn-primary btn-xs pull-right">
+            <a href="{{ path('contact_add', {'user': app.user.id}) }}" class="btn btn-primary btn-xs pull-right">
                 <b>+</b> Ajouter un contact</a>
         </div>
         <div class="row  custyle">

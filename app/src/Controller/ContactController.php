@@ -19,15 +19,12 @@ class ContactController extends AbstractController
 
     /**
      * Affichage de la liste des contacts de l'utilisateur connecté
-     * @Route("/list", name="list")
+     * @Route("/list/{user}", name="list")
+     * @param User $user
+     * @return Response
      */
-    public function index(): Response
+    public function index(User $user): Response
     {
-        /** @var User $user */
-        $user = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->findOneBy(['id' => 1]);
-
         $contacts = $user->getContacts();
 
         return $this->render('contact/index.html.twig',
@@ -37,17 +34,13 @@ class ContactController extends AbstractController
     /**
      * Ajout d'un contact
      *
-     * @Route("/add", methods={"GET", "POST"}, name="add")
+     * @Route("/add/{user}", methods={"GET", "POST"}, name="add")
      * @param Request $request
+     * @param User $user
      * @return Response
      */
-    public function add(Request $request): Response
+    public function add(Request $request, User $user): Response
     {
-        /** @var User $user */
-        $user = $this->getDoctrine()
-            ->getRepository(User::class)
-            ->findOneBy(['id' => 1]);
-
         $contact = new Contacts();
         $form = $this->createForm(ContactsType::class, $contact);
         $form->handleRequest($request);
@@ -58,7 +51,9 @@ class ContactController extends AbstractController
             $entityManager->persist($contact);
             $entityManager->flush();
 
-            return $this->redirectToRoute('contact_list');
+            return $this->redirectToRoute('contact_list', [
+                'user' => $user->getId()
+            ]);
         }
 
         return $this->render('contact/add.html.twig', [
@@ -83,7 +78,9 @@ class ContactController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('contact_list');
+            return $this->redirectToRoute('contact_list', [
+                'user' => $contact->getUser()->getId()
+            ]);
         }
 
         return $this->render('contact/edit.html.twig', [
@@ -117,6 +114,8 @@ class ContactController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('contact_list');
+        return $this->redirectToRoute('contact_list', [
+            'user' => $contact->getUser()->getId()
+        ]);
     }
 }
