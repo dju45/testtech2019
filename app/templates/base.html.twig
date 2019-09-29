@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
     {% block stylesheets %}
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet"
-              id="bootstrap-css">
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+              crossorigin="anonymous">
+        <script
+                src="https://code.jquery.com/jquery-3.4.1.min.js"
+                integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
         <style>
             .custab {
                 border: 1px solid #ccc;
@@ -63,7 +72,9 @@
 </div>
 
 {% block javascripts %}
+
     <script>
+
         isPalindrome($("#contacts_lastName"));
         isPalindrome($("#contacts_firstName"));
 
@@ -78,19 +89,16 @@
                             'name': nom
                         },
                         success: function (res) {
-                            if (res.response != true) {
-                                $('#alert').show();
-                                $('#nameStatus').empty().append("<span class='text-success'>- Le nom est valide</span>");
+                            if (res.response !== true) {
+                                $('#nameStatus').empty().append("<span class='text-success'>" + res.message + "</span>");
                             } else {
-                                $('#alert').show();
-                                $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut pas être un palindrome</span>");
+                                $('#nameStatus').empty().append("<span class='text-danger'>" + res.message + "</span>");
                             }
                         }
                     });
                 } else {
-                    $('#nameStatus').empty().append("<span class='text-danger'>- Le nom du contact ne peut être nul </span>");
+                    $('#nameStatus').empty().append("<span class='text-danger'> Le champ ne peut pas être vide</span>");
                 }
-
             });
         }
 
@@ -106,21 +114,16 @@
                     },
                     success: function (res) {
                         $('#progress').hide();
-                        if (res.response == true) {
-                            $('#error').hide();
-                            $('#success').show();
+                        if (res.response === false) {
+                            $('#message-email').empty().append("<span class='text-danger'>" + res.message + "</span>");
                         } else {
-                            $('#success').hide();
-                            $('#error').show();
-                            console.log(res.message);
+                            $('#message-email').empty().append("<span class='text-success'>" + res.message + "</span>");
                         }
                     }
                 });
             } else {
-                $('#success').hide();
-                $('#error').show();
+                $('#message-email').empty().append("<span class='text-danger'>Le champ email ne doit pas etre vide</span>");
             }
-
         });
     </script>
 {% endblock %}

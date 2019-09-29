@@ -25,7 +25,7 @@ $ composer install .
 
 configuration de la base de données dans le fichier `.env` 
 ```
-DATABASE_URL=mysql://root:root@mysql:1027/crm
+DATABASE_URL=mysql://username:password@mysql/crm
 ```
 
 créer la base de données:

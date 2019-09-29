@@ -22,7 +22,7 @@ class PalindromeCheckerTest extends TestCase
      */
     public function testPalindromeUpperSpaces()
     {
-        $palindromeChecker = new PalindromeChecker('A B B A');
+        $palindromeChecker = new PalindromeChecker(' A B B A ');
         $result = $palindromeChecker->isPalindrome();
 
         $this->assertEquals(true, $result);
@@ -49,6 +49,5 @@ class PalindromeCheckerTest extends TestCase
 
         $this->assertEquals(false, $result);
     }
-
 
 }

@@ -18,7 +18,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @UniqueEntity(
  *     fields={"email"},
- *     errorPath="port",
  *     message="Cet email est dejà utilisé."
  * )
  *

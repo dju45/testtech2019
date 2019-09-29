@@ -8,14 +8,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Api extends AbstractController
 {
     /**
-     * Palindrome
-     * @Route("/api/palindrome", methods={"GET","POST"}, name="api_palindrome")
+     * Vérifie si le champ est un palindrome
+     *
+     * @Route("/api/palindrome", methods={"POST"}, name="api_palindrome")
+     * @param ValidatorInterface $validator
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function palindrome(Request $request)
+    public function palindrome(Request $request, ValidatorInterface $validator): JsonResponse
     {
         $response = [];
         if (!$request->isMethod('POST')) {
@@ -27,9 +33,15 @@ class Api extends AbstractController
 
         if ($name) {
             if ($palindrome->isPalindrome()) {
-                $response = ['response' => true];
+                $response = [
+                    'response' => true,
+                    'message' => "Le champ ne doit pas être un palindrome"
+                ];
             } else {
-                $response = ['response' => false];
+                $response = [
+                    'response' => false,
+                    'message' => "Le champ est valide"
+                ];
             }
         }
 
@@ -38,31 +50,37 @@ class Api extends AbstractController
 
     /**
      * Vérification du format de l'email
-     * @Route("/api/email", methods={"GET","POST"}, name="api_email")
+     *
+     * @Route("/api/email", methods={"POST"}, name="api_email")
+     * @param ValidatorInterface $validator
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function email(Request $request)
+    public function email(Request $request, ValidatorInterface $validator): JsonResponse
     {
-        $response = [];
         if (!$request->isMethod('POST')) {
             return new JsonResponse([], Response::HTTP_NOT_FOUND);
         }
 
         $email = $request->get('email');
-        if ($email) {
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $response = [
-                    'response' => true,
-                    'message' => "L'email est au bon format"
-                ];
-            } else {
-                $response = [
-                    'response' => false,
-                    'message' => "Le format de l'email n'est pas correct"
-                ];
-            }
+        $emailConstraint = new Assert\Email();
+        $emailConstraint->message = "L'email n'est pas au bon format";
+
+        $errors = $validator->validate($email, $emailConstraint);
+
+        if (isset($errors[0])) {
+            $response = [
+                'response' => false,
+                'message' => $errors[0]->getMessage()
+            ];
+
+        } else {
+            $response = [
+                'response' => true,
+                'message' => "L'email est valide"
+            ];
         }
 
         return new JsonResponse($response);
-
     }
 }

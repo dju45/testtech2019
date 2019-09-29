@@ -19,7 +19,7 @@ interface SanitizeInterface
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      *
-     * @return string
+     * @return void
      */
     public function sanitizeFields(): void;
 

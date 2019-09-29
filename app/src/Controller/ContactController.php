@@ -36,7 +36,10 @@ class ContactController extends AbstractController
 
     /**
      * Ajout d'un contact
+     *
      * @Route("/add", methods={"GET", "POST"}, name="add")
+     * @param Request $request
+     * @return Response
      */
     public function add(Request $request): Response
     {
@@ -66,8 +69,11 @@ class ContactController extends AbstractController
 
     /**
      * Modification d'un contact
-     * @param Contacts $contacts
+     *
      * @Route("/edit/{id}", methods={"GET", "POST"}, name="edit")
+     * @param Contacts $contact
+     * @param Request $request
+     * @return Response
      */
     public function edit(Request $request, Contacts $contact): Response
     {
@@ -88,8 +94,11 @@ class ContactController extends AbstractController
 
     /**
      * Suppression d'un contact
+     *
      * @Route("/delete/{id}", methods={"delete"}, name="delete")
-     * @param Contacts $contacts
+     * @param Contacts $contact
+     * @param Request $request
+     * @return Response
      */
     public function delete(Contacts $contact, Request $request): Response
     {
