@@ -50,5 +50,5 @@ pour accéder à adminer:
 - [http://localhost:8080](http://localhost:8080)
 
 Se connecter à la plateforme:
--email: leboncoin@test.fr
--password: 21232f297a57a5a743894a0e4a801fc3
+- email: leboncoin@test.fr
+- password: 21232f297a57a5a743894a0e4a801fc3
